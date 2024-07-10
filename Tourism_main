@@ -1,0 +1,73 @@
+import pandas as pd
+import numpy as np
+
+# Create a sample dataset
+data = {
+    'Year': np.repeat([2018, 2019, 2020, 2021, 2022], 12),
+    'Month': list(range(1, 13)) * 5,
+    'Tourists': np.random.randint(1000, 5000, size=60),
+    'Country': np.random.choice(['USA', 'UK', 'Germany', 'France', 'China'], 60),
+    'Age_Group': np.random.choice(['18-25', '26-35', '36-45', '46-60', '60+'], 60)
+}
+
+df = pd.DataFrame(data)
+df.to_csv('tourism_data.csv', index=False)
+print(df.head())
+
+# Load the dataset
+df = pd.read_csv('tourism_data.csv')
+print(df.head())
+
+# Check for missing values
+print(df.isnull().sum())
+
+# No missing values in the sample data
+
+# Convert 'Year' and 'Month' to a datetime format
+df['Date'] = pd.to_datetime(df[['Year', 'Month']].assign(DAY=1))
+
+# Extract seasonal information
+df['Season'] = df['Date'].dt.month % 12 // 3 + 1
+
+print(df.head())
+
+import matplotlib.pyplot as plt
+
+# Plot tourist inflows over time
+plt.figure(figsize=(10, 6))
+plt.plot(df['Date'], df['Tourists'], marker='o')
+plt.title('Tourist Inflows Over Time')
+plt.xlabel('Date')
+plt.ylabel('Number of Tourists')
+plt.show()
+
+# Tourist inflows by season
+plt.figure(figsize=(8, 5))
+df.groupby('Season')['Tourists'].sum().plot(kind='bar', color='skyblue')
+plt.title('Tourist Inflows by Season')
+plt.xlabel('Season')
+plt.ylabel('Number of Tourists')
+plt.show()
+
+# Tourist inflows by country
+plt.figure(figsize=(12, 6))
+df.groupby('Country')['Tourists'].sum().sort_values(ascending=False).plot(kind='bar', color='lightgreen')
+plt.title('Tourist Inflows by Country')
+plt.xlabel('Country')
+plt.ylabel('Number of Tourists')
+plt.show()
+
+# Tourist inflows by age group
+plt.figure(figsize=(10, 6))
+df.groupby('Age_Group')['Tourists'].sum().plot(kind='bar', color='salmon')
+plt.title('Tourist Inflows by Age Group')
+plt.xlabel('Age Group')
+plt.ylabel('Number of Tourists')
+plt.show()
+
+# Marketing strategy suggestions
+print("Marketing Strategies:")
+print("1. Focus on peak seasons (Spring and Summer) for advertising campaigns.")
+print("2. Tailor marketing efforts to countries with the highest tourist inflows.")
+print("3. Develop age-specific promotional materials to attract different age groups.")
+
